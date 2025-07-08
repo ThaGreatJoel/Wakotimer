@@ -1,12 +1,7 @@
 #include <LiquidCrystal.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
-
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
-const char* apiKey = "YOUR_HACKATIME_API_KEY";
-const char* host = "hackatime.hackclub.com";
-const char* user = "YOUR_HACKATIME_USERNAME";
+#include "secrets.h"
 
 LiquidCrystal lcd(D1, D2, D3, D4, D5, D6);
 
@@ -24,7 +19,7 @@ void setup() {
   pinMode(buttonPin, INPUT_PULLUP);
   digitalWrite(buzzer, LOW);
   lcd.print("Connecting WiFi");
-  WiFi.begin(ssid, password);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   int tries = 0;
   while (WiFi.status() != WL_CONNECTED && tries < 20) {
     delay(500);
@@ -73,7 +68,7 @@ void buzz(bool error) {
 String getApiResponse() {
   WiFiClientSecure client;
   client.setInsecure();
-  if (!client.connect(host, 443)) {
+  if (!client.connect(HOST, 443)) {
     lcd.clear();
     lcd.print("API Error");
     buzz(true);
@@ -81,15 +76,16 @@ String getApiResponse() {
     return "";
   }
 
-  client.println(String("GET /api/v1/users/") + user + "/stats HTTP/1.1");
-  client.println("Host: hackatime.hackclub.com");
-  client.println(String("Authorization: Bearer ") + apiKey);
+  client.println(String("GET /api/v1/users/") + HACKATIME_USER + "/stats HTTP/1.1");
+  client.println("Host: " + String(HOST));
+  client.println("Authorization: Bearer " + String(API_KEY));
   client.println("Connection: close");
   client.println();
 
   String response = "";
   while (client.available() == 0) delay(100);
-  while (client.available()) response += client.readStringUntil('\n');
+  while (client.available()) response += client.readStringUntil('
+');
   return response;
 }
 
@@ -97,9 +93,9 @@ void showLiveProject() {
   String res = getApiResponse();
   if (res == "") return;
 
-  int projStart = res.indexOf("\"name\":\"");
-  int projEnd = res.indexOf("\"", projStart + 8);
-  int secStart = res.indexOf("\"seconds\":", projEnd);
+  int projStart = res.indexOf(""name":"");
+  int projEnd = res.indexOf(""", projStart + 8);
+  int secStart = res.indexOf(""seconds":", projEnd);
   int secEnd = res.indexOf("}", secStart);
 
   if (projStart != -1 && secStart != -1) {
@@ -129,10 +125,10 @@ void showMostUsedProject() {
   String res = getApiResponse();
   if (res == "") return;
 
-  int start = res.indexOf("\"projects\":[{");
-  int nameStart = res.indexOf("\"name\":\"", start);
-  int nameEnd = res.indexOf("\"", nameStart + 8);
-  int secStart = res.indexOf("\"seconds\":", nameEnd);
+  int start = res.indexOf(""projects":[{");
+  int nameStart = res.indexOf(""name":"", start);
+  int nameEnd = res.indexOf(""", nameStart + 8);
+  int secStart = res.indexOf(""seconds":", nameEnd);
   int secEnd = res.indexOf("}", secStart);
 
   if (nameStart != -1 && secStart != -1) {
@@ -155,7 +151,7 @@ void showTotalTime() {
   String res = getApiResponse();
   if (res == "") return;
 
-  int totalStart = res.indexOf("\"total_seconds\":");
+  int totalStart = res.indexOf(""total_seconds":");
   if (totalStart != -1) {
     int secEnd = res.indexOf(",", totalStart);
     int seconds = res.substring(totalStart + 17, secEnd).toInt();
