@@ -1,4 +1,4 @@
-# 📟 HackaTime Live Tracker (ESP8266 + LCD)
+#  HackaTime Live Tracker (ESP8266 + LCD)
 
 This project connects an **ESP8266 (NodeMCU)** to [HackaTime](https://hackatime.hackclub.com) to display **real-time coding stats** on a **16x2 LCD screen** and alerts using a buzzer.
 
@@ -11,7 +11,7 @@ A button lets you switch between these 3 views.
 
 ---
 
-## 🧰 Hardware
+##  Hardware
 
 - ESP8266 NodeMCU
 - 16x2 LCD (parallel, not I2C)
@@ -23,7 +23,7 @@ A button lets you switch between these 3 views.
 
 ---
 
-## ⚙️ Wiring
+##  Wiring
 
 ### LCD Pin Connections (using `LiquidCrystal lcd(D1, D2, D3, D4, D5, D6)`)
 
@@ -48,7 +48,7 @@ A button lets you switch between these 3 views.
 
 ---
 
-## 🔑 Configuration
+##  Configuration
 
 In the `.ino` file:
 
