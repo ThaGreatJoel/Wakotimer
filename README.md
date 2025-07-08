@@ -1,13 +1,60 @@
-# GitHub Codespaces ♥️ Next.js
+# 📟 HackaTime Live Tracker (ESP8266 + LCD)
 
-Welcome to your shiny new Codespace running Next.js! We've got everything fired up and running for you to explore Next.js.
+This project connects an **ESP8266 (NodeMCU)** to [HackaTime](https://hackatime.hackclub.com) to display **real-time coding stats** on a **16x2 LCD screen** and alerts using a buzzer.
 
-You've got a blank canvas to work on from a git perspective as well. There's a single initial commit with the what you're seeing right now - where you go from here is up to you!
+It shows your:
+- 🔴 **Live project** name + seconds coded
+- 🔁 **Most used project**
+- 🕒 **Total coding time**
 
-Everything you do here is contained within this one codespace. There is no repository on GitHub yet. If and when you’re ready you can click "Publish Branch" and we’ll create your repository and push up your project. If you were just exploring then and have no further need for this code then you can simply delete your codespace and it's gone forever.
+A button lets you switch between these 3 views.
 
-To run this application:
+---
 
-```
-npm run dev
-```
+## 🧰 Hardware
+
+- ESP8266 NodeMCU
+- 16x2 LCD (parallel, not I2C)
+- Potentiometer (for contrast)
+- Active buzzer
+- Push button
+- Breadboard and jumper wires
+- Wi-Fi (with internet)
+
+---
+
+## ⚙️ Wiring
+
+### LCD Pin Connections (using `LiquidCrystal lcd(D1, D2, D3, D4, D5, D6)`)
+
+| LCD Pin | Function | Connect to |
+|---------|----------|------------|
+| 1 (VSS) | GND      | GND        |
+| 2 (VDD) | VCC      | 5V         |
+| 3 (V0)  | Contrast | Pot center |
+| 4 (RS)  | Control  | D1         |
+| 5 (RW)  | Write    | GND        |
+| 6 (E)   | Enable   | D2         |
+| 11–14   | D4–D7    | D3–D6      |
+| 15 (A)  | Backlight| 5V (with 220Ω resistor) |
+| 16 (K)  | Backlight| GND        |
+
+### Other Pins
+
+| Component | ESP8266 Pin |
+|-----------|-------------|
+| Buzzer    | D7          |
+| Button    | D0          |
+
+---
+
+## 🔑 Configuration
+
+In the `.ino` file:
+
+```cpp
+const char* ssid = "YourWiFiSSID";
+const char* password = "YourWiFiPassword";
+
+const char* apiKey = "your-hackatime-api-key";
+const char* host = "hackatime.hackclub.com";
